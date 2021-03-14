@@ -48,6 +48,8 @@ namespace agl
       void horizontal(int ax, int ay, int bx, int by);
 
       void vertical(int ax, int ay, int bx, int by);
+      
+      void diagonal(int ax, int ay, int bx, int by);
 
    private:
       ppm_image _canvas;

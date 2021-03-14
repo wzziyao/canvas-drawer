@@ -14,7 +14,7 @@ canvas::canvas(int w, int h) : _canvas(w, h)
 
 canvas::~canvas()
 {
-   
+   delete[] vertices;
 }
 
 void canvas::save(const std::string& filename)
@@ -64,6 +64,13 @@ void canvas::end()
             bresenhamHigh(ax, ay, bx, by);
          } else {
             bresenhamHigh(bx, by, ax, ay);
+         }
+      } else if (abs(width) == abs(height)) {
+         cout << "diagonal" << endl;
+         if (ax < bx) {
+            diagonal(ax, ay, bx, by);
+         } else {
+            diagonal(bx, by, ax, ay);
          }
       } else if (abs(width) == 0) {
          cout << "width == 0" << endl;
@@ -128,18 +135,21 @@ void canvas::bresenhamLow(int ax, int ay, int bx, int by)
 {
    int y = ay;
    int W = bx - ax;
-   int H = by - ay;
+   int H = abs(by - ay);
    int F = 2 * H - W;
    float t = 0.0;
    float inc = (bx - ax) / 10.0;
-   for (int x = ax; x <= bx-1; x++) {
+   for (int x = ax; x <= bx; x++) {
+      cout << y << endl;
       ppm_pixel current;
       current.r = (unsigned char) old_color.r * (1 - t) + current_color.r * t;
       current.g = (unsigned char) old_color.g * (1 - t) + current_color.g * t;
       current.b = (unsigned char) old_color.b * (1 - t) + current_color.b * t;
-      _canvas.set(x, y, current);
+      _canvas.set(y, x, current);
+      cout << F << endl;
       if (F > 0) {
-         y++;
+         if (by > ay) y++;
+         else y--;
          F += 2 * (H - W);
       } else {
          F += 2 * H;
@@ -151,19 +161,22 @@ void canvas::bresenhamLow(int ax, int ay, int bx, int by)
 void canvas::bresenhamHigh(int ax, int ay, int bx, int by)
 {
    int x = ax;
-   int W = bx - ax;
+   int W = abs(bx - ax);
    int H = by - ay;
    int F = 2 * W - H;
    float t = 0.0;
    float inc = (bx - ax) / 10.0;
-   for (int y = ay; y <= by-1; y++) {
+   for (int y = ay; y <= by; y++) {
+      cout << x << endl;
       ppm_pixel current;
       current.r = (unsigned char) old_color.r * (1 - t) + current_color.r * t;
       current.g = (unsigned char) old_color.g * (1 - t) + current_color.g * t;
       current.b = (unsigned char) old_color.b * (1 - t) + current_color.b * t;
-      _canvas.set(x, y, current);
+      _canvas.set(y, x, current);
+      // cout << F << endl;
       if (F > 0) {
-         x++;
+         if (bx > ax) x++;
+         else x--;
          F += 2 * (W - H);
       } else {
          F += 2 * W;
@@ -176,7 +189,7 @@ void canvas::horizontal(int ax, int ay, int bx, int by)
 {
    float t = 0.0;
    float inc = (bx - ax) / 10.0;
-   for (int x = ax; x <= bx-1; x++) {
+   for (int x = ax; x <= bx; x++) {
       ppm_pixel current;
       current.r = (unsigned char) old_color.r * (1 - t) + current_color.r * t;
       current.g = (unsigned char) old_color.g * (1 - t) + current_color.g * t;
@@ -188,19 +201,40 @@ void canvas::horizontal(int ax, int ay, int bx, int by)
       _canvas.set(ay, x, current);
       t += inc;
    }
-   cout << "OUT HORIZONTAL" << endl;
 }
 
 void canvas::vertical(int ax, int ay, int bx, int by)
 {
    float t = 0.0;
-   float inc = (bx - ax) / 10.0;
-   for (int y = ay; y <= by-1; y++) {
+   float inc = (by - ay) / 10.0;
+   for (int y = ay; y <= by; y++) {
       ppm_pixel current;
       current.r = (unsigned char) old_color.r * (1 - t) + current_color.r * t;
       current.g = (unsigned char) old_color.g * (1 - t) + current_color.g * t;
       current.b = (unsigned char) old_color.b * (1 - t) + current_color.b * t;
       _canvas.set(y, ax, current);
       t += inc;
+   }
+}
+
+void canvas::diagonal(int ax, int ay, int bx, int by) {
+   float t = 0.0;
+   float inc = (bx - ax) / 10.0;
+   int x = ax;
+   int y = ay;
+   cout << "ax: " << ax << endl;
+   cout << "ay: " << ay << endl;
+   while (x <= bx) {
+      cout << x << endl;
+      cout << y << endl;
+      ppm_pixel current;
+      current.r = (unsigned char) old_color.r * (1 - t) + current_color.r * t;
+      current.g = (unsigned char) old_color.g * (1 - t) + current_color.g * t;
+      current.b = (unsigned char) old_color.b * (1 - t) + current_color.b * t;
+      _canvas.set(y, x, current);
+      t += inc;
+      x++;
+      if (by > ay) y++;
+      else y--;
    }
 }

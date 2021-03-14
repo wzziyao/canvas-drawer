@@ -19,14 +19,14 @@ int main(int argc, char** argv)
    canvas drawer(100, 100);
 
    drawer.color(255, 255, 255);
-   test_line(drawer, 0, 50, 100, 50, "horizontal-line.png");
-   // test_line(drawer, 50, 0, 50, 100, "vertical-line.png");
-   // test_line(drawer, 0, 0, 100, 100, "diagonal-line-1.png"); // slope = 1
-   // test_line(drawer, 25, 10, 75, 25,  "h-lessthan-w-line-1.png"); // slope H < W
-   // test_line(drawer, 25, 25, 75, 75,  "w-lessthan-h-line-1.png"); // slope W < H
-   // test_line(drawer, 0, 100, 100, 0, "diagonal-line-2.png"); // slope H < W
-   // test_line(drawer, 25, 90, 75, 75,  "h-lessthan-w-line-2.png"); // slope H < W
-   // test_line(drawer, 25, 90, 75, 25,  "w-lessthan-h-line-2.png"); // slope W < H
+   test_line(drawer, 0, 50, 99, 50, "horizontal-line.png");
+   test_line(drawer, 50, 0, 50, 99, "vertical-line.png");
+   test_line(drawer, 0, 0, 99, 99, "diagonal-line-1.png"); // slope = 1
+   test_line(drawer, 25, 10, 75, 25,  "h-lessthan-w-line-1.png"); // slope H < W
+   test_line(drawer, 25, 25, 75, 75,  "w-lessthan-h-line-1.png"); // slope W < H
+   test_line(drawer, 0, 99, 99, 0, "diagonal-line-2.png"); // slope H < W
+   test_line(drawer, 25, 90, 75, 75,  "h-lessthan-w-line-2.png"); // slope H < W
+   test_line(drawer, 25, 90, 75, 25,  "w-lessthan-h-line-2.png"); // slope W < H
 
    // // test line interpolation
    // drawer.background(0, 0, 0);
