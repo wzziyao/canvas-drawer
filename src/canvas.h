@@ -40,8 +40,21 @@ namespace agl
       // Fill the canvas with the given background color
       void background(unsigned char r, unsigned char g, unsigned char b);
 
+      // drawline functions
+      void bresenhamLow(int ax, int ay, int bx, int by);
+
+      void bresenhamHigh(int ax, int ay, int bx, int by);
+
+      void horizontal(int ax, int ay, int bx, int by);
+
+      void vertical(int ax, int ay, int bx, int by);
+
    private:
       ppm_image _canvas;
+      PrimitiveType p_type;
+      int *vertices;
+      int next_vertex, first_color;
+      ppm_pixel old_color, current_color;
    };
 }
 
