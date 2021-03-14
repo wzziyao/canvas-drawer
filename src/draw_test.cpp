@@ -28,15 +28,15 @@ int main(int argc, char** argv)
    test_line(drawer, 25, 90, 75, 75,  "h-lessthan-w-line-2.png"); // slope H < W
    test_line(drawer, 25, 90, 75, 25,  "w-lessthan-h-line-2.png"); // slope W < H
 
-   // // test line interpolation
-   // drawer.background(0, 0, 0);
-   // drawer.begin(LINES);
-   // drawer.color(255, 0, 255);
-   // drawer.vertex(0, 0);
-   // drawer.color(0, 255, 255);
-   // drawer.vertex(100, 100);
-   // drawer.end();
-   // drawer.save("line-color-interpolation.png");
+   // test line interpolation
+   drawer.background(0, 0, 0);
+   drawer.begin(LINES);
+   drawer.color(255, 0, 255);
+   drawer.vertex(0, 0);
+   drawer.color(0, 255, 255);
+   drawer.vertex(99, 99);
+   drawer.end();
+   drawer.save("line-color-interpolation.png");
 
    // // test triangle with interpolation
    // drawer.background(0, 0, 0);

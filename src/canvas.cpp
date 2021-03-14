@@ -138,7 +138,7 @@ void canvas::bresenhamLow(int ax, int ay, int bx, int by)
    int H = abs(by - ay);
    int F = 2 * H - W;
    float t = 0.0;
-   float inc = (bx - ax) / 10.0;
+   float inc = 1.0 / (bx - ax);
    for (int x = ax; x <= bx; x++) {
       cout << y << endl;
       ppm_pixel current;
@@ -165,7 +165,7 @@ void canvas::bresenhamHigh(int ax, int ay, int bx, int by)
    int H = by - ay;
    int F = 2 * W - H;
    float t = 0.0;
-   float inc = (bx - ax) / 10.0;
+   float inc = 1.0 / (bx - ax);
    for (int y = ay; y <= by; y++) {
       cout << x << endl;
       ppm_pixel current;
@@ -188,7 +188,7 @@ void canvas::bresenhamHigh(int ax, int ay, int bx, int by)
 void canvas::horizontal(int ax, int ay, int bx, int by)
 {
    float t = 0.0;
-   float inc = (bx - ax) / 10.0;
+   float inc = 1.0 / (bx - ax);
    for (int x = ax; x <= bx; x++) {
       ppm_pixel current;
       current.r = (unsigned char) old_color.r * (1 - t) + current_color.r * t;
@@ -206,7 +206,7 @@ void canvas::horizontal(int ax, int ay, int bx, int by)
 void canvas::vertical(int ax, int ay, int bx, int by)
 {
    float t = 0.0;
-   float inc = (by - ay) / 10.0;
+   float inc = 1.0 / (bx - ax);
    for (int y = ay; y <= by; y++) {
       ppm_pixel current;
       current.r = (unsigned char) old_color.r * (1 - t) + current_color.r * t;
@@ -219,7 +219,7 @@ void canvas::vertical(int ax, int ay, int bx, int by)
 
 void canvas::diagonal(int ax, int ay, int bx, int by) {
    float t = 0.0;
-   float inc = (bx - ax) / 10.0;
+   float inc = 1.0 / (bx - ax);
    int x = ax;
    int y = ay;
    cout << "ax: " << ax << endl;
