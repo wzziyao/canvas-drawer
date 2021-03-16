@@ -42,14 +42,14 @@ namespace agl
 
       // drawline functions
       void bresenhamLow(int ax, int ay, int bx, int by);
-
       void bresenhamHigh(int ax, int ay, int bx, int by);
-
       void horizontal(int ax, int ay, int bx, int by);
-
       void vertical(int ax, int ay, int bx, int by);
-      
       void diagonal(int ax, int ay, int bx, int by);
+
+      // triangles
+      void fillTriangle(int ax, int ay, int bx, int by, int cx, int cy, int px, int py);
+      int implicitFunction(int ax, int ay, int bx, int by, int x, int y);
 
    private:
       ppm_image _canvas;

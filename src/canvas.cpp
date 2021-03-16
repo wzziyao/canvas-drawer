@@ -8,7 +8,7 @@ using namespace agl;
 
 canvas::canvas(int w, int h) : _canvas(w, h)
 {
-   current_color = {0, 0, 0};
+   // current_color = {0, 0, 0};
    first_color = 1;
 }
 
@@ -26,11 +26,13 @@ void canvas::save(const std::string& filename)
 void canvas::begin(PrimitiveType type)
 {
    cout << "BEGIN" << endl;
+   delete[] vertices;
    p_type = type;
    next_vertex = 0;
    if (p_type == LINES) {
       vertices = new int [2 * 2];
    } else if (p_type == TRIANGLES) {
+      cout << "TRIANGLE" << endl;
       vertices = new int [3 * 2];
    }
    cout << "size of vertices: " << sizeof(vertices) << endl;
@@ -39,48 +41,106 @@ void canvas::begin(PrimitiveType type)
 void canvas::end()
 {
    cout << "END" << endl;
-   // cout << "size of vertices: " << sizeof(vertices) << endl;
-   for (int i = 0; i < sizeof(vertices) / 2 - 1; i+=3) {
-      int ax = vertices[i];
-      int ay = vertices[i+1];
-      int bx = vertices[i+2];
-      int by = vertices[i+3];
-      cout << "a: " << ax << ", " << ay << endl;
-      cout << "b: " << bx << ", " << by << endl;
-      int width = bx - ax;
-      int height = by - ay;
-      // cout << width << endl;
-      // cout << height << endl;
-      if (abs(width) > abs(height) && abs(width) != 0 && abs(height) != 0) {
-         cout << "width > height" << endl;
-         if (ax < bx) {
-            bresenhamLow(ax, ay, bx, by);
-         } else {
-            bresenhamLow(bx, by, ax, ay);
+   if (p_type == LINES) {
+      for (int i = 0; i < sizeof(vertices) / 2 - 1; i+=4) {
+         int ax = vertices[i];
+         int ay = vertices[i+1];
+         int bx = vertices[i+2];
+         int by = vertices[i+3];
+         cout << "a: " << ax << ", " << ay << endl;
+         cout << "b: " << bx << ", " << by << endl;
+         int width = bx - ax;
+         int height = by - ay;
+         if (abs(width) > abs(height) && abs(width) != 0 && abs(height) != 0) {
+            cout << "width > height" << endl;
+            if (ax < bx) {
+               bresenhamLow(ax, ay, bx, by);
+            } else {
+               bresenhamLow(bx, by, ax, ay);
+            }
+         } else if (abs(width) < abs(height) && abs(width) != 0 && abs(height) != 0) {
+            cout << "width < height" << endl;
+            if (ay < by) {
+               bresenhamHigh(ax, ay, bx, by);
+            } else {
+               bresenhamHigh(bx, by, ax, ay);
+            }
+         } else if (abs(width) == abs(height)) {
+            cout << "diagonal" << endl;
+            if (ax < bx) {
+               diagonal(ax, ay, bx, by);
+            } else {
+               diagonal(bx, by, ax, ay);
+            }
+         } else if (abs(width) == 0) {
+            cout << "width == 0" << endl;
+            if (ay < by) {
+               vertical(ax, ay, bx, by);
+            }
+            else {
+               vertical(bx, by, ax, ay);
+            }
+         } else if (abs(height) == 0) {
+            cout << "height == 0" << endl;
+            if (ax < bx) {
+               horizontal(ax, ay, bx, by);
+            }
+            else {
+               horizontal(bx, by, ax, ay);
+            }
          }
-      } else if (abs(width) < abs(height) && abs(width) != 0 && abs(height) != 0) {
-         cout << "width < height" << endl;
-         if (ay < by) {
-            bresenhamHigh(ax, ay, bx, by);
-         } else {
-            bresenhamHigh(bx, by, ax, ay);
+      }
+   } else if (p_type == TRIANGLES) {
+      cout << "END TRIANGLE" << endl;
+      for (int i = 0; i < sizeof(vertices) / 3; i+=6) {
+         int ax = vertices[i];
+         int ay = vertices[i+1];
+         int bx = vertices[i+2];
+         int by = vertices[i+3];
+         int cx = vertices[i+4];
+         int cy = vertices[i+5];
+
+         int f_alpha = implicitFunction(bx, by, cx, cy, ax, ay);
+         int f_beta = implicitFunction(ax, ay, cx, cy, bx, by);
+         int f_gamma = implicitFunction(ax, ay, bx, by, cx, cy);
+
+         int xmin = min(ax, min(bx, cx));
+         int ymin = min(ay, min(by, cy));
+         int xmax = max(ax, max(bx, cx));
+         int ymax = max(ay, max(by, cy));
+
+         ppm_pixel current;
+
+         for (int row = ymin; row < ymax; row++) {
+            for (int col = xmin; col < xmax; col++) {
+               float alpha = (float) implicitFunction(bx, by, cx, cy, col, row) / f_alpha;
+               float beta = (float) implicitFunction(ax, ay, cx, cy, col, row) / f_beta;
+               float gamma = (float) implicitFunction(ax, ay, bx, by, col, row) / f_gamma;
+
+               current.r = (unsigned char) (int) (alpha * (float) (_canvas.get(ay, ax).r) + beta * (float) (_canvas.get(by, bx).r) + gamma * (float) (_canvas.get(cy, cx).r));
+               current.g = (unsigned char) (int) (alpha * (float) (_canvas.get(ay, ax).g) + beta * (float) (_canvas.get(by, bx).g) + gamma * (float) (_canvas.get(cy, cx).g));
+               current.b = (unsigned char) (int) (alpha * (float) (_canvas.get(ay, ax).b) + beta * (float) (_canvas.get(by, bx).b) + gamma * (float) (_canvas.get(cy, cx).b));
+
+               if (alpha >= 0 && beta >= 0 && gamma >= 0) {
+                  if (alpha > 0 || f_alpha * implicitFunction(bx, by, cx, cy, -1, -1) > 0) {
+                     _canvas.set(row, col, current);
+                  }
+                  if (beta > 0 || f_beta * implicitFunction(ax, ay, cx, cy, -1, -1) > 0) {
+                     _canvas.set(row, col, current);
+                  }
+                  if (gamma > 0 || f_gamma * implicitFunction(ax, ay, bx, by, -1, -1) > 0) {
+                     _canvas.set(row, col, current);
+                  }
+               }
+            }
          }
-      } else if (abs(width) == abs(height)) {
-         cout << "diagonal" << endl;
-         if (ax < bx) {
-            diagonal(ax, ay, bx, by);
-         } else {
-            diagonal(bx, by, ax, ay);
-         }
-      } else if (abs(width) == 0) {
-         cout << "width == 0" << endl;
-         vertical(ax, ay, bx, by);
-      } else if (abs(height) == 0) {
-         cout << "height == 0" << endl;
-         horizontal(ax, ay, bx, by);
       }
    }
+}
 
+int canvas::implicitFunction(int ax, int ay, int bx, int by, int x, int y)
+{
+   return (by - ay) * (x - ax) - (bx - ax) * (y - ay);
 }
 
 void canvas::vertex(int x, int y)
@@ -89,6 +149,18 @@ void canvas::vertex(int x, int y)
    vertices[next_vertex] = x;
    vertices[next_vertex+1] = y;
    next_vertex+=2;
+   _canvas.set(vertices[next_vertex-1], vertices[next_vertex-2], current_color);
+   if (next_vertex == sizeof(vertices) - 1) {
+      int temp[sizeof(vertices)];
+      for (int i = 0; i < sizeof(vertices); i++) {
+         temp[i] = vertices[i];
+      }
+      delete[] vertices;
+      vertices = new int [sizeof(temp) * 2];
+      for (int i = 0; i < sizeof(vertices); i++) {
+         vertices[i] = temp[i];
+      }
+   }
 }
 
 void canvas::color(unsigned char r, unsigned char g, unsigned char b)
@@ -142,9 +214,9 @@ void canvas::bresenhamLow(int ax, int ay, int bx, int by)
    for (int x = ax; x <= bx; x++) {
       cout << y << endl;
       ppm_pixel current;
-      current.r = (unsigned char) old_color.r * (1 - t) + current_color.r * t;
-      current.g = (unsigned char) old_color.g * (1 - t) + current_color.g * t;
-      current.b = (unsigned char) old_color.b * (1 - t) + current_color.b * t;
+      current.r = (unsigned char) _canvas.get(ay, ax).r * (1 - t) + _canvas.get(by, bx).r * t;
+      current.g = (unsigned char) _canvas.get(ay, ax).g * (1 - t) + _canvas.get(by, bx).g * t;
+      current.b = (unsigned char) _canvas.get(ay, ax).b * (1 - t) + _canvas.get(by, bx).b * t;
       _canvas.set(y, x, current);
       cout << F << endl;
       if (F > 0) {
@@ -169,9 +241,9 @@ void canvas::bresenhamHigh(int ax, int ay, int bx, int by)
    for (int y = ay; y <= by; y++) {
       cout << x << endl;
       ppm_pixel current;
-      current.r = (unsigned char) old_color.r * (1 - t) + current_color.r * t;
-      current.g = (unsigned char) old_color.g * (1 - t) + current_color.g * t;
-      current.b = (unsigned char) old_color.b * (1 - t) + current_color.b * t;
+      current.r = (unsigned char) _canvas.get(ay, ax).r * (1 - t) + _canvas.get(by, bx).r * t;
+      current.g = (unsigned char) _canvas.get(ay, ax).g * (1 - t) + _canvas.get(by, bx).g * t;
+      current.b = (unsigned char) _canvas.get(ay, ax).b * (1 - t) + _canvas.get(by, bx).b * t;
       _canvas.set(y, x, current);
       // cout << F << endl;
       if (F > 0) {
@@ -191,13 +263,9 @@ void canvas::horizontal(int ax, int ay, int bx, int by)
    float inc = 1.0 / (bx - ax);
    for (int x = ax; x <= bx; x++) {
       ppm_pixel current;
-      current.r = (unsigned char) old_color.r * (1 - t) + current_color.r * t;
-      current.g = (unsigned char) old_color.g * (1 - t) + current_color.g * t;
-      current.b = (unsigned char) old_color.b * (1 - t) + current_color.b * t;
-      // cout << "row = " << x << endl;
-      // cout << "col = " << ay << endl;
-      // cout << "myHeight = " << _canvas.height() << endl;
-      // cout << "myWidth = " << _canvas.width() << endl;
+      current.r = (unsigned char) _canvas.get(ay, ax).r * (1 - t) + _canvas.get(by, bx).r * t;
+      current.g = (unsigned char) _canvas.get(ay, ax).g * (1 - t) + _canvas.get(by, bx).g * t;
+      current.b = (unsigned char) _canvas.get(ay, ax).b * (1 - t) + _canvas.get(by, bx).b * t;
       _canvas.set(ay, x, current);
       t += inc;
    }
@@ -206,31 +274,28 @@ void canvas::horizontal(int ax, int ay, int bx, int by)
 void canvas::vertical(int ax, int ay, int bx, int by)
 {
    float t = 0.0;
-   float inc = 1.0 / (bx - ax);
+   float inc = 1.0 / (by - ay);
    for (int y = ay; y <= by; y++) {
       ppm_pixel current;
-      current.r = (unsigned char) old_color.r * (1 - t) + current_color.r * t;
-      current.g = (unsigned char) old_color.g * (1 - t) + current_color.g * t;
-      current.b = (unsigned char) old_color.b * (1 - t) + current_color.b * t;
+      current.r = (unsigned char) _canvas.get(ay, ax).r * (1 - t) + _canvas.get(by, bx).r * t;
+      current.g = (unsigned char) _canvas.get(ay, ax).g * (1 - t) + _canvas.get(by, bx).g * t;
+      current.b = (unsigned char) _canvas.get(ay, ax).b * (1 - t) + _canvas.get(by, bx).b * t;
       _canvas.set(y, ax, current);
       t += inc;
    }
 }
 
-void canvas::diagonal(int ax, int ay, int bx, int by) {
+void canvas::diagonal(int ax, int ay, int bx, int by) 
+{
    float t = 0.0;
    float inc = 1.0 / (bx - ax);
    int x = ax;
    int y = ay;
-   cout << "ax: " << ax << endl;
-   cout << "ay: " << ay << endl;
    while (x <= bx) {
-      cout << x << endl;
-      cout << y << endl;
       ppm_pixel current;
-      current.r = (unsigned char) old_color.r * (1 - t) + current_color.r * t;
-      current.g = (unsigned char) old_color.g * (1 - t) + current_color.g * t;
-      current.b = (unsigned char) old_color.b * (1 - t) + current_color.b * t;
+      current.r = (unsigned char) _canvas.get(ay, ax).r * (1 - t) + _canvas.get(by, bx).r * t;
+      current.g = (unsigned char) _canvas.get(ay, ax).g * (1 - t) + _canvas.get(by, bx).g * t;
+      current.b = (unsigned char) _canvas.get(ay, ax).b * (1 - t) + _canvas.get(by, bx).b * t;
       _canvas.set(y, x, current);
       t += inc;
       x++;
