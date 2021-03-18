@@ -58,6 +58,7 @@ namespace agl
       PrimitiveType p_type;
       int first_color;
       ppm_pixel old_color, current_color;
+      vector<int> colors;
       vector<int> vertices;
    };
 }

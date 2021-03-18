@@ -8,13 +8,11 @@ using namespace agl;
 
 canvas::canvas(int w, int h) : _canvas(w, h)
 {
-   // current_color = {0, 0, 0};
    first_color = 1;
 }
 
 canvas::~canvas()
 {
-   // delete[] vertices;
    vertices.clear();
 }
 
@@ -39,6 +37,18 @@ void canvas::end()
          int ay = vertices[i+1];
          int bx = vertices[i+2];
          int by = vertices[i+3];
+
+         ppm_pixel color_a, color_b;
+         cout << "COLORS[I]: " << colors[i] << endl;
+         color_a.r = (unsigned char) colors[i];
+         color_a.g = (unsigned char) colors[i+1];
+         color_a.b = (unsigned char) colors[i+2];
+         color_b.r = (unsigned char) colors[i+3];
+         color_b.g = (unsigned char) colors[i+4];
+         color_b.b = (unsigned char) colors[i+5];
+         _canvas.set(vertices[i+1], vertices[i], color_a);
+         _canvas.set(vertices[i+3], vertices[i+2], color_b);
+
          cout << "a: " << ax << ", " << ay << endl;
          cout << "b: " << bx << ", " << by << endl;
          int width = bx - ax;
@@ -84,6 +94,7 @@ void canvas::end()
       }
    } else if (p_type == TRIANGLES) {
       cout << "END TRIANGLE" << endl;
+      int j = 0;
       for (int i = 0; i < vertices.size(); i+=6) {
          int ax = vertices[i];
          int ay = vertices[i+1];
@@ -91,6 +102,22 @@ void canvas::end()
          int by = vertices[i+3];
          int cx = vertices[i+4];
          int cy = vertices[i+5];
+
+         ppm_pixel color_a, color_b, color_c;
+         color_a.r = (unsigned char) colors[j];
+         color_a.g = (unsigned char) colors[j+1];
+         color_a.b = (unsigned char) colors[j+2];
+         color_b.r = (unsigned char) colors[j+3];
+         color_b.g = (unsigned char) colors[j+4];
+         color_b.b = (unsigned char) colors[j+5];
+         color_c.r = (unsigned char) colors[j+6];
+         color_c.g = (unsigned char) colors[j+7];
+         color_c.b = (unsigned char) colors[j+8];
+         j += 9;
+
+         _canvas.set(vertices[i+1], vertices[i], color_a);
+         _canvas.set(vertices[i+3], vertices[i+2], color_b);
+         _canvas.set(vertices[i+5], vertices[i+4], color_c);
 
          int f_alpha = implicitFunction(bx, by, cx, cy, ax, ay);
          int f_beta = implicitFunction(ax, ay, cx, cy, bx, by);
@@ -103,8 +130,8 @@ void canvas::end()
 
          ppm_pixel current;
 
-         for (int row = ymin; row < ymax; row++) {
-            for (int col = xmin; col < xmax; col++) {
+         for (int row = ymin; row <= ymax; row++) {
+            for (int col = xmin; col <= xmax; col++) {
                float alpha = (float) implicitFunction(bx, by, cx, cy, col, row) / f_alpha;
                float beta = (float) implicitFunction(ax, ay, cx, cy, col, row) / f_beta;
                float gamma = (float) implicitFunction(ax, ay, bx, by, col, row) / f_gamma;
@@ -114,21 +141,17 @@ void canvas::end()
                current.b = (unsigned char) (int) (alpha * (float) (_canvas.get(ay, ax).b) + beta * (float) (_canvas.get(by, bx).b) + gamma * (float) (_canvas.get(cy, cx).b));
 
                if (alpha >= 0 && beta >= 0 && gamma >= 0) {
-                  if (alpha > 0 || f_alpha * implicitFunction(bx, by, cx, cy, -1, -1) > 0) {
-                     _canvas.set(row, col, current);
-                  }
-                  if (beta > 0 || f_beta * implicitFunction(ax, ay, cx, cy, -1, -1) > 0) {
-                     _canvas.set(row, col, current);
-                  }
-                  if (gamma > 0 || f_gamma * implicitFunction(ax, ay, bx, by, -1, -1) > 0) {
-                     _canvas.set(row, col, current);
-                  }
+                  bool drawAlpha = (alpha > 0 || f_alpha * implicitFunction(bx, by, cx, cy, -1, -1) >= 0);
+                  bool drawBeta = (beta > 0 || f_beta * implicitFunction(ax, ay, cx, cy, -1, -1) >= 0);
+                  bool drawGamma = (gamma > 0 || f_gamma * implicitFunction(ax, ay, bx, by, -1, -1) >= 0);
+                  if (drawAlpha && drawBeta && drawGamma) _canvas.set(row, col, current);
                }
             }
          }
       }
    }
    vertices.clear();
+   colors.clear();
 }
 
 int canvas::implicitFunction(int ax, int ay, int bx, int by, int x, int y)
@@ -141,7 +164,9 @@ void canvas::vertex(int x, int y)
    cout << "VERTEX" << endl;
    vertices.emplace_back(x);
    vertices.emplace_back(y);
-   _canvas.set(vertices[vertices.size()-1], vertices[vertices.size()-2], current_color);
+   colors.emplace_back((int)current_color.r);
+   colors.emplace_back((int)current_color.g);
+   colors.emplace_back((int)current_color.b);
 }
 
 void canvas::color(unsigned char r, unsigned char g, unsigned char b)
@@ -226,7 +251,6 @@ void canvas::bresenhamHigh(int ax, int ay, int bx, int by)
       current.g = (unsigned char) _canvas.get(ay, ax).g * (1 - t) + _canvas.get(by, bx).g * t;
       current.b = (unsigned char) _canvas.get(ay, ax).b * (1 - t) + _canvas.get(by, bx).b * t;
       _canvas.set(y, x, current);
-      // cout << F << endl;
       if (F > 0) {
          if (bx > ax) x++;
          else x--;
