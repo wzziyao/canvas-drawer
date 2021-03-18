@@ -14,7 +14,8 @@ canvas::canvas(int w, int h) : _canvas(w, h)
 
 canvas::~canvas()
 {
-   delete[] vertices;
+   // delete[] vertices;
+   vertices.clear();
 }
 
 void canvas::save(const std::string& filename)
@@ -26,23 +27,14 @@ void canvas::save(const std::string& filename)
 void canvas::begin(PrimitiveType type)
 {
    cout << "BEGIN" << endl;
-   delete[] vertices;
    p_type = type;
-   next_vertex = 0;
-   if (p_type == LINES) {
-      vertices = new int [2 * 2];
-   } else if (p_type == TRIANGLES) {
-      cout << "TRIANGLE" << endl;
-      vertices = new int [3 * 2];
-   }
-   cout << "size of vertices: " << sizeof(vertices) << endl;
 }
 
 void canvas::end()
 {
    cout << "END" << endl;
    if (p_type == LINES) {
-      for (int i = 0; i < sizeof(vertices) / 2 - 1; i+=4) {
+      for (int i = 0; i < vertices.size(); i+=4) {
          int ax = vertices[i];
          int ay = vertices[i+1];
          int bx = vertices[i+2];
@@ -92,7 +84,7 @@ void canvas::end()
       }
    } else if (p_type == TRIANGLES) {
       cout << "END TRIANGLE" << endl;
-      for (int i = 0; i < sizeof(vertices) / 3; i+=6) {
+      for (int i = 0; i < vertices.size(); i+=6) {
          int ax = vertices[i];
          int ay = vertices[i+1];
          int bx = vertices[i+2];
@@ -136,6 +128,7 @@ void canvas::end()
          }
       }
    }
+   vertices.clear();
 }
 
 int canvas::implicitFunction(int ax, int ay, int bx, int by, int x, int y)
@@ -146,21 +139,9 @@ int canvas::implicitFunction(int ax, int ay, int bx, int by, int x, int y)
 void canvas::vertex(int x, int y)
 {
    cout << "VERTEX" << endl;
-   vertices[next_vertex] = x;
-   vertices[next_vertex+1] = y;
-   next_vertex+=2;
-   _canvas.set(vertices[next_vertex-1], vertices[next_vertex-2], current_color);
-   if (next_vertex == sizeof(vertices) - 1) {
-      int temp[sizeof(vertices)];
-      for (int i = 0; i < sizeof(vertices); i++) {
-         temp[i] = vertices[i];
-      }
-      delete[] vertices;
-      vertices = new int [sizeof(temp) * 2];
-      for (int i = 0; i < sizeof(vertices); i++) {
-         vertices[i] = temp[i];
-      }
-   }
+   vertices.emplace_back(x);
+   vertices.emplace_back(y);
+   _canvas.set(vertices[vertices.size()-1], vertices[vertices.size()-2], current_color);
 }
 
 void canvas::color(unsigned char r, unsigned char g, unsigned char b)

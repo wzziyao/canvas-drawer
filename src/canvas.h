@@ -5,6 +5,8 @@
 #include <vector>
 #include "ppm_image.h"
 
+using namespace std;
+
 namespace agl
 {
    enum PrimitiveType {UNDEFINED, LINES, TRIANGLES};
@@ -54,9 +56,9 @@ namespace agl
    private:
       ppm_image _canvas;
       PrimitiveType p_type;
-      int *vertices;
-      int next_vertex, first_color;
+      int first_color;
       ppm_pixel old_color, current_color;
+      vector<int> vertices;
    };
 }
 
