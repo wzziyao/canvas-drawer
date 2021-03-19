@@ -134,15 +134,16 @@ drawer.arms(15);
 ![Combined functions](images/diagonal-line-1.png)
 ![Combined functions](images/h-lessthan-w-line-1.png)
 
-*Interpolated line colors*
-
 ![Combined functions](images/w-lessthan-h-line-1.png)
 ![Combined functions](images/diagonal-line-2.png)
 ![Combined functions](images/h-lessthan-w-line-2.png)
 ![Combined functions](images/w-lessthan-h-line-2.png)
 
-*Triangles and composite shapes*
+*Interpolated line colors*
 
 ![Combined functions](images/line-color-interpolation.png)
+
+*Triangles and composite shapes*
+
 ![Combined functions](images/triangle.png)
 ![Combined functions](images/quad.png)
