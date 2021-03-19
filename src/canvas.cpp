@@ -184,6 +184,20 @@ void canvas::end()
 
          rectangle(xc, yc, width, height, color);
       }
+   } else if (p_type == POINTS) {
+      int color_index = 0;
+      for (int i = 0; i < vertices.size(); i+=2) {
+         int xc = vertices[i];
+         int yc = vertices[i+1];
+
+         ppm_pixel color;
+         color.r = (unsigned char) colors[color_index];
+         color.g = (unsigned char) colors[color_index+1];
+         color.b = (unsigned char) colors[color_index+2];
+         color_index += 3;
+
+         point(xc, yc, color);
+      }
    }
    vertices.clear();
    colors.clear();
@@ -401,9 +415,13 @@ void canvas::rectangle(int xc, int yc, int w, int h, const ppm_pixel& color)
    vertical(bx, by, dx, dy);
 }
 
-
 void canvas::setWidthHeight(int w, int h)
 {
    widthHeight.emplace_back(w);
    widthHeight.emplace_back(h);
+}
+
+void canvas::point(int x, int y, const ppm_pixel& color)
+{
+   _canvas.set(y, x, color);
 }
