@@ -58,6 +58,10 @@ namespace agl
       void bresenhamCircle(int xc, int yc, int r, const ppm_pixel& color);
       void setRadius(int r);
 
+      // rectangles
+      void rectangle(int xc, int yc, int w, int h, const ppm_pixel& color);
+      void setWidthHeight(int w, int h);
+
    private:
       ppm_image _canvas;
       PrimitiveType p_type;
@@ -66,6 +70,7 @@ namespace agl
       vector<int> colors;
       vector<int> vertices;
       vector<int> radius;
+      vector<int> widthHeight;
    };
 }
 

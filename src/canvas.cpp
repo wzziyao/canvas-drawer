@@ -166,6 +166,24 @@ void canvas::end()
 
          bresenhamCircle(xc, yc, r, color);
       }
+   } else if (p_type == RECTANGLES) {
+      int color_index = 0;
+      int widthHeight_index = 0;
+      for (int i = 0; i < vertices.size(); i+=2) {
+         int xc = vertices[i];
+         int yc = vertices[i+1];
+         int width = widthHeight[widthHeight_index];
+         int height = widthHeight[widthHeight_index+1];
+
+         ppm_pixel color;
+         color.r = (unsigned char) colors[color_index];
+         color.g = (unsigned char) colors[color_index+1];
+         color.b = (unsigned char) colors[color_index+2];
+         color_index += 3;
+         widthHeight_index += 2;
+
+         rectangle(xc, yc, width, height, color);
+      }
    }
    vertices.clear();
    colors.clear();
@@ -359,4 +377,33 @@ void canvas::bresenhamCircle(int xc, int yc, int r, const ppm_pixel& color)
 void canvas::setRadius(int r) 
 {
    radius.emplace_back(r);
+}
+
+void canvas::rectangle(int xc, int yc, int w, int h, const ppm_pixel& color)
+{
+   int ax = xc - w/2;
+   int ay = yc - h/2;
+   int bx = xc + w/2;
+   int by = yc  - h/2;
+   int cx = xc - w/2;
+   int cy = yc + h/2;
+   int dx = xc + w/2;
+   int dy = yc + h/2;
+
+   _canvas.set(ay, ax, color);
+   _canvas.set(by, bx, color);
+   _canvas.set(cy, cx, color);
+   _canvas.set(dy, dx, color);
+
+   horizontal(ax, ay, bx, by);
+   horizontal(cx, cy, dx, dy);
+   vertical(ax, ay, cx, cy);
+   vertical(bx, by, dx, dy);
+}
+
+
+void canvas::setWidthHeight(int w, int h)
+{
+   widthHeight.emplace_back(w);
+   widthHeight.emplace_back(h);
 }
