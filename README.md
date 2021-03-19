@@ -6,21 +6,6 @@ Random circles and stars:
 
 <img src="images/art.png" alt="unique" width="500"/>
 
-Stars with any number of points given by user input:
-
-drawer.arms(5);
-
-<img src="images/star-test.png" alt="unique" width="500"/>
-
-drawer.arms(8);
-
-<img src="images/star-test1.png" alt="unique" width="500"/>
-
-drawer.arms(15);
-
-<img src="images/star-test2.png" alt="unique" width="500"/>
-
-
 ## How to build
 
 *Windows*
