@@ -2,6 +2,7 @@
 #include <cassert>
 #include <typeinfo>
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 using namespace agl;
@@ -51,43 +52,54 @@ void canvas::end()
 
          cout << "a: " << ax << ", " << ay << endl;
          cout << "b: " << bx << ", " << by << endl;
+         clamp(ax, ay, bx, by);
          int width = bx - ax;
          int height = by - ay;
          if (abs(width) > abs(height) && abs(width) != 0 && abs(height) != 0) {
             cout << "width > height" << endl;
             if (ax < bx) {
+               clamp(ax, ay, bx, by);
                bresenhamLow(ax, ay, bx, by);
             } else {
+               clamp(ax, ay, bx, by);
                bresenhamLow(bx, by, ax, ay);
             }
          } else if (abs(width) < abs(height) && abs(width) != 0 && abs(height) != 0) {
             cout << "width < height" << endl;
             if (ay < by) {
+               clamp(ax, ay, bx, by);
                bresenhamHigh(ax, ay, bx, by);
             } else {
+               clamp(ax, ay, bx, by);
                bresenhamHigh(bx, by, ax, ay);
             }
          } else if (abs(width) == abs(height)) {
             cout << "diagonal" << endl;
             if (ax < bx) {
+               clamp(ax, ay, bx, by);
                diagonal(ax, ay, bx, by);
             } else {
+               clamp(ax, ay, bx, by);
                diagonal(bx, by, ax, ay);
             }
          } else if (abs(width) == 0) {
             cout << "width == 0" << endl;
             if (ay < by) {
+               clamp(ax, ay, bx, by);
                vertical(ax, ay, bx, by);
             }
             else {
+               clamp(ax, ay, bx, by);
                vertical(bx, by, ax, ay);
             }
          } else if (abs(height) == 0) {
             cout << "height == 0" << endl;
             if (ax < bx) {
+               clamp(ax, ay, bx, by);
                horizontal(ax, ay, bx, by);
             }
             else {
+               clamp(ax, ay, bx, by);
                horizontal(bx, by, ax, ay);
             }
          }
@@ -197,6 +209,22 @@ void canvas::end()
          color_index += 3;
 
          point(xc, yc, color);
+      }
+   } else if (p_type == STARS) {
+      int color_index = 0;
+      for (int i = 0; i < vertices.size(); i+=2) {
+         int xc = vertices[i];
+         int yc = vertices[i+1];
+         int outer_r = radius[i];
+         int inner_r = radius[i+1];
+
+         ppm_pixel color;
+         color.r = (unsigned char) colors[color_index];
+         color.g = (unsigned char) colors[color_index+1];
+         color.b = (unsigned char) colors[color_index+2];
+         color_index += 3;
+
+         star(xc, yc, outer_r, inner_r, color);
       }
    }
    vertices.clear();
@@ -360,14 +388,14 @@ void canvas::diagonal(int ax, int ay, int bx, int by)
 
 void canvas::drawCircle(int xc, int yc, int x, int y, const ppm_pixel& color)
 {
-   _canvas.set(yc+y, xc+x, color);
-   _canvas.set(yc+y, xc-x, color);
-   _canvas.set(yc-y, xc+x, color);
-   _canvas.set(yc-y, xc-x, color);
-   _canvas.set(yc+x, xc+y, color);
-   _canvas.set(yc+x, xc-y, color);
-   _canvas.set(yc-x, xc+y, color);
-   _canvas.set(yc-x, xc-y, color);
+   if (yc+y < _canvas.height() && xc+x < _canvas.width()) _canvas.set(yc+y, xc+x, color);
+   if (yc+y < _canvas.height() && xc-x >= 0) _canvas.set(yc+y, xc-x, color);
+   if (yc-y >= 0 && xc+x < _canvas.width()) _canvas.set(yc-y, xc+x, color);
+   if (yc-y>= 0 && xc-x >= 0) _canvas.set(yc-y, xc-x, color);
+   if (yc+x < _canvas.height() && xc+y < _canvas.width()) _canvas.set(yc+x, xc+y, color);
+   if (yc+x < _canvas.height() && xc-y >= 0) _canvas.set(yc+x, xc-y, color);
+   if (yc-x >= 0 && xc+y < _canvas.width()) _canvas.set(yc-x, xc+y, color);
+   if (yc-x >= 0 && xc-y >= 0) _canvas.set(yc-x, xc-y, color);
 }
 
 void canvas::bresenhamCircle(int xc, int yc, int r, const ppm_pixel& color)
@@ -424,4 +452,91 @@ void canvas::setWidthHeight(int w, int h)
 void canvas::point(int x, int y, const ppm_pixel& color)
 {
    _canvas.set(y, x, color);
+}
+
+void canvas::star(int xc, int yc, int outer_r, int inner_r, const ppm_pixel& color) {
+    float angle = M_PI / 5.0f;
+
+   int x, y, old_x, old_y;
+   for (int i = 0; i <= 2 * 5; i++) {
+         int r = i % 2;
+         if (r == 0) r = outer_r;
+         else r = inner_r;
+         old_x = x;
+         old_y = y;
+         x = xc + (int)(cos(i * angle) * r);
+         y = yc + (int)(sin(i * angle) * r);
+         if (i == 0) {
+            _canvas.set(y, x, color);
+         }
+         else {
+            _canvas.set(y, x, color);
+            int bx = x;
+            int by = y;
+            int ax = old_x;
+            int ay = old_y;
+            int width = bx - ax;
+            int height = by - ay;
+            if (abs(width) > abs(height) && abs(width) != 0 && abs(height) != 0) {
+               cout << "width > height" << endl;
+               if (ax < bx) {
+                  clamp(ax, ay, bx, by);
+                  bresenhamLow(ax, ay, bx, by);
+               } else {
+                  clamp(ax, ay, bx, by);
+                  bresenhamLow(bx, by, ax, ay);
+               }
+            } else if (abs(width) < abs(height) && abs(width) != 0 && abs(height) != 0) {
+               cout << "width < height" << endl;
+               if (ay < by) {
+                  clamp(ax, ay, bx, by);
+                  bresenhamHigh(ax, ay, bx, by);
+               } else {
+                  clamp(ax, ay, bx, by);
+                  bresenhamHigh(bx, by, ax, ay);
+               }
+            } else if (abs(width) == abs(height)) {
+               cout << "diagonal" << endl;
+               if (ax < bx) {
+                  clamp(ax, ay, bx, by);
+                  diagonal(ax, ay, bx, by);
+               } else {
+                  clamp(ax, ay, bx, by);
+                  diagonal(bx, by, ax, ay);
+               }
+            } else if (abs(width) == 0) {
+               cout << "width == 0" << endl;
+               if (ay < by) {
+                  clamp(ax, ay, bx, by);
+                  vertical(ax, ay, bx, by);
+               }
+               else {
+                  clamp(ax, ay, bx, by);
+                  vertical(bx, by, ax, ay);
+               }
+            } else if (abs(height) == 0) {
+               cout << "height == 0" << endl;
+               if (ax < bx) {
+                  clamp(ax, ay, bx, by);
+                  horizontal(ax, ay, bx, by);
+               }
+               else {
+                  clamp(ax, ay, bx, by);
+                  horizontal(bx, by, ax, ay);
+               }
+            }
+         }
+   }
+}
+
+void canvas::clamp(int ax, int ay, int bx, int by) 
+{
+   ax = min(ax, _canvas.width()-1);
+   ay = min(ay, _canvas.height()-1);
+   bx = min(bx, _canvas.width()-1);
+   by = min(by, _canvas.height()-1);
+   ax = max(ax, 0);
+   ay = max(ay, 0);
+   bx = max(bx, 0);
+   by = max(by, 0);
 }

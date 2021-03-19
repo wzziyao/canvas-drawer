@@ -4,6 +4,7 @@
         "iostream": "cpp",
         "ostream": "cpp",
         "vector": "cpp",
-        "__split_buffer": "cpp"
+        "__split_buffer": "cpp",
+        "algorithm": "cpp"
     }
 }

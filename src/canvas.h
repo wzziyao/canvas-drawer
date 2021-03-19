@@ -9,7 +9,7 @@ using namespace std;
 
 namespace agl
 {
-   enum PrimitiveType {UNDEFINED, LINES, TRIANGLES, CIRCLES, RECTANGLES, POINTS};
+   enum PrimitiveType {UNDEFINED, LINES, TRIANGLES, CIRCLES, RECTANGLES, POINTS, STARS};
    class canvas
    {
    public:
@@ -64,6 +64,11 @@ namespace agl
 
       // points
       void point(int x, int y, const ppm_pixel& color);
+
+      // stars
+      void star(int xc, int yc, int outer_r, int inner_r, const ppm_pixel& color);
+
+      void clamp(int ax, int ay, int bx, int by);
 
    private:
       ppm_image _canvas;
