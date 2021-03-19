@@ -50,6 +50,7 @@ Line drawing, interpolated line colors, triangles, and composite shapes.
 
 More features:
 **Circles**
+
 Draw a circle given its center and radius.
 ```
 drawer.background(int r, int g, int, b);
@@ -62,6 +63,7 @@ drawer.save(string filename);
 ```
 
 **Rectangles**
+
 Draw a rectangle given its center, width, and height.
 ```
 drawer.background(int r, int g, int, b);
@@ -74,6 +76,7 @@ drawer.save(string filename);
 ```
 
 **Points**
+
 Draw a point given its coordinate.
 ```
 drawer.background(int r, int g, int, b);
@@ -85,6 +88,7 @@ drawer.save(string filename);
 ```
 
 **Stars**
+
 Draw a star given its center, outer radius, inner radius, and number of points.
 ```
 drawer.background(int r, int g, int, b);
@@ -99,11 +103,11 @@ drawer.save(string filename);
 ```
 
 ## Results
-*Random circles and stars*
+**Random circles and stars**
 
 <img src="images/art.png" alt="unique" width="500"/>
 
-*Stars with any number of points given by user input*
+**Stars with any number of points given by user input**
 
 drawer.arms(5);
 
@@ -117,17 +121,15 @@ drawer.arms(15);
 
 <img src="images/star-test2.png" alt="unique" width="500"/>
 
-*Circles*
+**Circles**
 
 <img src="images/circle-test.png" alt="unique" width="500"/>
 
-*Rectangles*
+**Rectangles**
 
 <img src="images/rectangle-test.png" alt="unique" width="500"/>
 
-*Default*
-
-*Line drawing*
+**Line drawing**
 
 ![Combined functions](images/horizontal-line.png)
 ![Combined functions](images/vertical-line.png)
@@ -139,11 +141,11 @@ drawer.arms(15);
 ![Combined functions](images/h-lessthan-w-line-2.png)
 ![Combined functions](images/w-lessthan-h-line-2.png)
 
-*Interpolated line colors*
+**Interpolated line colors**
 
 ![Combined functions](images/line-color-interpolation.png)
 
-*Triangles and composite shapes*
+**Triangles and composite shapes**
 
 ![Combined functions](images/triangle.png)
 ![Combined functions](images/quad.png)
