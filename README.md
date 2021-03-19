@@ -2,7 +2,16 @@
 
 Implements a simple drawing api
 
+Random circles and stars:
 <img src="images/art.png" alt="unique" width="500"/>
+Stars with any number of points given by user input:
+drawer.arms(5);
+<img src="images/star-test.png" alt="unique" width="500"/>
+drawer.arms(8);
+<img src="images/star-test1.png" alt="unique" width="500"/>
+drawer.arms(15);
+<img src="images/star-test2.png" alt="unique" width="500"/>
+
 
 ## How to build
 
@@ -44,8 +53,11 @@ canvas-drawer/build $ ../bin/draw_art
 ```
 
 ## Supported primitives
+Line drawing, interpolated line colors, triangles, and composite shapes.
 
+More features:
 **Circles**
+Draw a circle given its center and radius.
 ```
 drawer.background(int r, int g, int, b);
 drawer.begin(CIRCLES);
@@ -57,6 +69,7 @@ drawer.save(string filename);
 ```
 
 **Rectangles**
+Draw a rectangle given its center, width, and height.
 ```
 drawer.background(int r, int g, int, b);
 drawer.begin(RECTANGLES);
@@ -68,6 +81,7 @@ drawer.save(string filename);
 ```
 
 **Points**
+Draw a point given its coordinate.
 ```
 drawer.background(int r, int g, int, b);
 drawer.begin(POINTS);
@@ -78,20 +92,48 @@ drawer.save(string filename);
 ```
 
 **Stars**
+Draw a star given its center, outer radius, inner radius, and number of points.
 ```
 drawer.background(int r, int g, int, b);
-drawer.begin(PrimitiveType p);
+drawer.begin(STARS);
 drawer.color(int r, int g, int, b);
 drawer.vertex(int y, int x);
 drawer.setRadius(int outer_radius);
 drawer.setRadius(int inner_radius);
+drawer.arms(int number_of_points);
 drawer.end();
 drawer.save(string filename);
 ```
 
 ## Results
-
+*Random circles and stars*
 <img src="images/art.png" alt="unique" width="500"/>
-<img src="images/circle-test.png" alt="unique" width="500"/>
-<img src="images/rectangle-test.png" alt="unique" width="500"/>
+*Stars with any number of points given by user input*
+drawer.arms(5);
 <img src="images/star-test.png" alt="unique" width="500"/>
+drawer.arms(8);
+<img src="images/star-test1.png" alt="unique" width="500"/>
+drawer.arms(15);
+<img src="images/star-test2.png" alt="unique" width="500"/>
+*Circles*
+<img src="images/circle-test.png" alt="unique" width="500"/>
+*Rectangles*
+<img src="images/rectangle-test.png" alt="unique" width="500"/>
+
+*Default*
+*Line drawing*
+![Combined functions](images/horizontal-line.png)
+![Combined functions](images/vertical-line.png)
+![Combined functions](images/diagonal-line-1.png)
+![Combined functions](images/h-lessthan-w-line-1.png)
+
+*Interpolated line colors*
+![Combined functions](images/w-lessthan-h-line-1.png)
+![Combined functions](images/diagonal-line-2.png)
+![Combined functions](images/h-lessthan-w-line-2.png)
+![Combined functions](images/w-lessthan-h-line-2.png)
+
+*Triangles and composite shapes*
+![Combined functions](images/line-color-interpolation.png)
+![Combined functions](images/triangle.png)
+![Combined functions](images/quad.png)

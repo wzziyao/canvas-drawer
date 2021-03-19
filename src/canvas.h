@@ -67,13 +67,14 @@ namespace agl
 
       // stars
       void star(int xc, int yc, int outer_r, int inner_r, const ppm_pixel& color);
+      void arms(int arms);
 
       void clamp(int ax, int ay, int bx, int by);
 
    private:
       ppm_image _canvas;
       PrimitiveType p_type;
-      int first_color;
+      int first_color, star_arms;
       ppm_pixel old_color, current_color;
       vector<int> colors;
       vector<int> vertices;

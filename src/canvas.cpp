@@ -455,10 +455,10 @@ void canvas::point(int x, int y, const ppm_pixel& color)
 }
 
 void canvas::star(int xc, int yc, int outer_r, int inner_r, const ppm_pixel& color) {
-    float angle = M_PI / 5.0f;
+    float angle = M_PI / (float)star_arms;
 
    int x, y, old_x, old_y;
-   for (int i = 0; i <= 2 * 5; i++) {
+   for (int i = 0; i <= 2 * star_arms; i++) {
          int r = i % 2;
          if (r == 0) r = outer_r;
          else r = inner_r;
@@ -527,6 +527,11 @@ void canvas::star(int xc, int yc, int outer_r, int inner_r, const ppm_pixel& col
             }
          }
    }
+}
+
+void canvas::arms(int arms)
+{
+   star_arms = arms;
 }
 
 void canvas::clamp(int ax, int ay, int bx, int by) 
