@@ -3,13 +3,21 @@
 Implements a simple drawing api
 
 Random circles and stars:
+
 <img src="images/art.png" alt="unique" width="500"/>
+
 Stars with any number of points given by user input:
+
 drawer.arms(5);
+
 <img src="images/star-test.png" alt="unique" width="500"/>
+
 drawer.arms(8);
+
 <img src="images/star-test1.png" alt="unique" width="500"/>
+
 drawer.arms(15);
+
 <img src="images/star-test2.png" alt="unique" width="500"/>
 
 
@@ -107,33 +115,49 @@ drawer.save(string filename);
 
 ## Results
 *Random circles and stars*
+
 <img src="images/art.png" alt="unique" width="500"/>
+
 *Stars with any number of points given by user input*
+
 drawer.arms(5);
+
 <img src="images/star-test.png" alt="unique" width="500"/>
+
 drawer.arms(8);
+
 <img src="images/star-test1.png" alt="unique" width="500"/>
+
 drawer.arms(15);
+
 <img src="images/star-test2.png" alt="unique" width="500"/>
+
 *Circles*
+
 <img src="images/circle-test.png" alt="unique" width="500"/>
+
 *Rectangles*
+
 <img src="images/rectangle-test.png" alt="unique" width="500"/>
 
 *Default*
+
 *Line drawing*
+
 ![Combined functions](images/horizontal-line.png)
 ![Combined functions](images/vertical-line.png)
 ![Combined functions](images/diagonal-line-1.png)
 ![Combined functions](images/h-lessthan-w-line-1.png)
 
 *Interpolated line colors*
+
 ![Combined functions](images/w-lessthan-h-line-1.png)
 ![Combined functions](images/diagonal-line-2.png)
 ![Combined functions](images/h-lessthan-w-line-2.png)
 ![Combined functions](images/w-lessthan-h-line-2.png)
 
 *Triangles and composite shapes*
+
 ![Combined functions](images/line-color-interpolation.png)
 ![Combined functions](images/triangle.png)
 ![Combined functions](images/quad.png)
