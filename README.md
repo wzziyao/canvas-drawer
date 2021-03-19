@@ -2,7 +2,7 @@
 
 Implements a simple drawing api
 
-TODO: Add a representative image for your project here
+<img src="images/art.png" alt="unique" width="500"/>
 
 ## How to build
 
@@ -45,8 +45,53 @@ canvas-drawer/build $ ../bin/draw_art
 
 ## Supported primitives
 
-TODO: Document the custom primitives supported by your canvas class
+**Circles**
+```
+drawer.background(int r, int g, int, b);
+drawer.begin(CIRCLES);
+drawer.color(int r, int g, int, b);
+drawer.vertex(int y, int x);
+drawer.setRadius(int r);
+drawer.end();
+drawer.save(string filename);
+```
+
+**Rectangles**
+```
+drawer.background(int r, int g, int, b);
+drawer.begin(RECTANGLES);
+drawer.color(int r, int g, int, b);
+drawer.vertex(int y, int x);
+drawer.setWidthHeight(int width, int height);
+drawer.end();
+drawer.save(string filename);
+```
+
+**Points**
+```
+drawer.background(int r, int g, int, b);
+drawer.begin(POINTS);
+drawer.color(int r, int g, int, b);
+drawer.vertex(int y, int x);
+drawer.end();
+drawer.save(string filename);
+```
+
+**Stars**
+```
+drawer.background(int r, int g, int, b);
+drawer.begin(PrimitiveType p);
+drawer.color(int r, int g, int, b);
+drawer.vertex(int y, int x);
+drawer.setRadius(int outer_radius);
+drawer.setRadius(int inner_radius);
+drawer.end();
+drawer.save(string filename);
+```
 
 ## Results
 
-TODO: Show artworks using your class
+<img src="images/art.png" alt="unique" width="500"/>
+<img src="images/circle-test.png" alt="unique" width="500"/>
+<img src="images/rectangle-test.png" alt="unique" width="500"/>
+<img src="images/star-test.png" alt="unique" width="500"/>
