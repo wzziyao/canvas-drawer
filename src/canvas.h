@@ -9,7 +9,7 @@ using namespace std;
 
 namespace agl
 {
-   enum PrimitiveType {UNDEFINED, LINES, TRIANGLES};
+   enum PrimitiveType {UNDEFINED, LINES, TRIANGLES, CIRCLES, RECTANGLES, STARS, FLOWERS};
    class canvas
    {
    public:
@@ -53,6 +53,11 @@ namespace agl
       void fillTriangle(int ax, int ay, int bx, int by, int cx, int cy, int px, int py);
       int implicitFunction(int ax, int ay, int bx, int by, int x, int y);
 
+      // circles
+      void drawCircle(int xc, int yc, int x, int y, const ppm_pixel& color);
+      void bresenhamCircle(int xc, int yc, int r, const ppm_pixel& color);
+      void setRadius(int r);
+
    private:
       ppm_image _canvas;
       PrimitiveType p_type;
@@ -60,6 +65,7 @@ namespace agl
       ppm_pixel old_color, current_color;
       vector<int> colors;
       vector<int> vertices;
+      vector<int> radius;
    };
 }
 

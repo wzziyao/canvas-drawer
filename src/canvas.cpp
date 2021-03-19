@@ -94,7 +94,7 @@ void canvas::end()
       }
    } else if (p_type == TRIANGLES) {
       cout << "END TRIANGLE" << endl;
-      int j = 0;
+      int color_index = 0;
       for (int i = 0; i < vertices.size(); i+=6) {
          int ax = vertices[i];
          int ay = vertices[i+1];
@@ -104,16 +104,16 @@ void canvas::end()
          int cy = vertices[i+5];
 
          ppm_pixel color_a, color_b, color_c;
-         color_a.r = (unsigned char) colors[j];
-         color_a.g = (unsigned char) colors[j+1];
-         color_a.b = (unsigned char) colors[j+2];
-         color_b.r = (unsigned char) colors[j+3];
-         color_b.g = (unsigned char) colors[j+4];
-         color_b.b = (unsigned char) colors[j+5];
-         color_c.r = (unsigned char) colors[j+6];
-         color_c.g = (unsigned char) colors[j+7];
-         color_c.b = (unsigned char) colors[j+8];
-         j += 9;
+         color_a.r = (unsigned char) colors[color_index];
+         color_a.g = (unsigned char) colors[color_index+1];
+         color_a.b = (unsigned char) colors[color_index+2];
+         color_b.r = (unsigned char) colors[color_index+3];
+         color_b.g = (unsigned char) colors[color_index+4];
+         color_b.b = (unsigned char) colors[color_index+5];
+         color_c.r = (unsigned char) colors[color_index+6];
+         color_c.g = (unsigned char) colors[color_index+7];
+         color_c.b = (unsigned char) colors[color_index+8];
+         color_index += 9;
 
          _canvas.set(vertices[i+1], vertices[i], color_a);
          _canvas.set(vertices[i+3], vertices[i+2], color_b);
@@ -148,6 +148,23 @@ void canvas::end()
                }
             }
          }
+      }
+   } else if (p_type == CIRCLES) {
+      int color_index = 0;
+      int radius_index = 0;
+      for (int i = 0; i < vertices.size(); i+=2) {
+         int xc = vertices[i];
+         int yc = vertices[i+1];
+         int r = radius[radius_index];
+
+         ppm_pixel color;
+         color.r = (unsigned char) colors[color_index];
+         color.g = (unsigned char) colors[color_index+1];
+         color.b = (unsigned char) colors[color_index+2];
+         color_index += 3;
+         radius_index++;
+
+         bresenhamCircle(xc, yc, r, color);
       }
    }
    vertices.clear();
@@ -307,4 +324,39 @@ void canvas::diagonal(int ax, int ay, int bx, int by)
       if (by > ay) y++;
       else y--;
    }
+}
+
+void canvas::drawCircle(int xc, int yc, int x, int y, const ppm_pixel& color)
+{
+   _canvas.set(yc+y, xc+x, color);
+   _canvas.set(yc+y, xc-x, color);
+   _canvas.set(yc-y, xc+x, color);
+   _canvas.set(yc-y, xc-x, color);
+   _canvas.set(yc+x, xc+y, color);
+   _canvas.set(yc+x, xc-y, color);
+   _canvas.set(yc-x, xc+y, color);
+   _canvas.set(yc-x, xc-y, color);
+}
+
+void canvas::bresenhamCircle(int xc, int yc, int r, const ppm_pixel& color)
+{
+   int x = 0;
+   int y = r;
+   int d = 3 - 2 * r;
+   drawCircle(xc, yc, x, y, color);
+   while (y >= x) {
+      x++;
+      if (d > 0) {
+         y --;
+         d = d + 4 * (x - y) + 10;
+      } else {
+         d = d + 4 * x + 6;
+      }
+      drawCircle(xc, yc, x, y, color);
+   }
+}
+
+void canvas::setRadius(int r) 
+{
+   radius.emplace_back(r);
 }
